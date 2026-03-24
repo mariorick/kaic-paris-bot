@@ -1,11 +1,11 @@
 const { Telegraf, Markup } = require('telegraf')
 const { createClient } = require('@supabase/supabase-js')
 
-const bot = new Telegraf(process.env.BOT_TOKEN)
+const bot = new Telegraf(process.env.8724953695:AAHneqy-XHtfaeAZLZ_XVpdJA-PgKt8g_dg)
 
 const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
+  process.env.https://rqssyjegtawgdbsksqqe.supabase.co,
+  process.env.sb_publishable_tz9zGl4Ypxcc0T2yPkHk1g_pzTyBDTG
 )
 
 const LINKS = {
