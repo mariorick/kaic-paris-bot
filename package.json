@@ -1,13 +1,13 @@
 {
-  "name": "kaic-paris-bot",
+  "name": "kaicparis-telegram-bot",
   "version": "1.0.0",
+  "description": "Bot simples do Telegram para Kaic Paris",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.4",
-    "telegraf": "^4.16.3"
+    "node-telegram-bot-api": "^0.66.0"
   }
 }
