@@ -1,6 +1,0 @@
-git init
-git add .
-git commit -m "Bot Telegram inicial"
-git branch -M main
-git remote add origin SEU_REPOSITORIO_GITHUB
-git push -u origin main
