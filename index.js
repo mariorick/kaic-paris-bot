@@ -1,6 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
 
-const token = process.env.8657772002:AAHCDieDogeAHkfgH8XFZ2tGiwFi3MGK1b0;
+const token = process.env.BOT_TOKEN;
 
 if (!token) {
   console.error('ERRO: BOT_TOKEN não foi definido nas variáveis de ambiente.');
