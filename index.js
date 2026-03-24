@@ -1,93 +1,65 @@
-const { Telegraf, Markup } = require('telegraf')
-const { createClient } = require('@supabase/supabase-js')
+const TelegramBot = require('node-telegram-bot-api');
 
-const bot = new Telegraf(process.env.8724953695:AAHneqy-XHtfaeAZLZ_XVpdJA-PgKt8g_dg)
+const token = process.env.8657772002:AAHCDieDogeAHkfgH8XFZ2tGiwFi3MGK1b0;
 
-const supabase = createClient(
-  process.env.https://rqssyjegtawgdbsksqqe.supabase.co,
-  process.env.sb_publishable_tz9zGl4Ypxcc0T2yPkHk1g_pzTyBDTG
-)
-
-const LINKS = {
-  preview: 'https://t.me/+n9padkABd9Q1MDgx',
-  vip: 'https://t.me/+MIzDfcW5GBBiOGJh',
-  privacy: 'https://privacy.com.br/profile/kaicparis',
-  onlyfans: 'https://onlyfans.com/kaicparis'
+if (!token) {
+  console.error('ERRO: BOT_TOKEN não foi definido nas variáveis de ambiente.');
+  process.exit(1);
 }
 
-async function saveLead(ctx, extra = {}) {
-  try {
-    const user = ctx.from || {}
-    const text = ctx.message && ctx.message.text ? ctx.message.text : ''
-    const source = text.startsWith('/start ') ? text.replace('/start ', '').trim() : null
+console.log('Iniciando bot...');
 
-    await supabase.from('telegram_leads').upsert({
-      telegram_id: String(user.id),
-      username: user.username || null,
-      first_name: user.first_name || null,
-      last_name: user.last_name || null,
-      language_code: user.language_code || null,
-      source: source,
-      last_interaction_at: new Date().toISOString(),
-      ...extra
-    }, {
-      onConflict: 'telegram_id'
+const bot = new TelegramBot(token, { polling: true });
+
+bot.on('polling_error', (error) => {
+  console.error('Polling error:', error.message);
+});
+
+bot.on('webhook_error', (error) => {
+  console.error('Webhook error:', error.message);
+});
+
+bot.onText(/\/start(?:\s+(.*))?/, (msg, match) => {
+  const chatId = msg.chat.id;
+  const source = match && match[1] ? match[1] : 'direct';
+
+  console.log('Recebido /start de:', {
+    chatId,
+    username: msg.from?.username,
+    firstName: msg.from?.first_name,
+    source
+  });
+
+  const welcomeMessage =
+    `✨ Bem-vindo ao universo de Kaic Paris\n\n` +
+    `Escolha uma das opções abaixo para continuar:`;
+
+  const options = {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: '🔥 Prévias', url: 'https://t.me/+n9padkABd9Q1MDgx' }],
+        [{ text: '💎 VIP', url: 'https://t.me/+MIzDfcW5GBBiOGJh' }],
+        [{ text: '🔗 Privacy', url: 'https://privacy.com.br/profile/kaicparis' }],
+        [{ text: '⭐ OnlyFans', url: 'https://onlyfans.com/kaicparis' }]
+      ]
+    }
+  };
+
+  bot.sendMessage(chatId, welcomeMessage, options)
+    .then(() => {
+      console.log('Mensagem enviada com sucesso para chatId:', chatId);
     })
-  } catch (error) {
-    console.error('Erro ao salvar lead:', error.message)
-  }
-}
+    .catch((err) => {
+      console.error('Erro ao enviar mensagem:', err.message);
+    });
+});
 
-function mainMenu() {
-  return Markup.inlineKeyboard([
-    [
-      Markup.button.callback('✨ Prévias', 'go_preview'),
-      Markup.button.callback('👑 VIP', 'go_vip')
-    ],
-    [
-      Markup.button.url('📲 Privacy', LINKS.privacy),
-      Markup.button.url('🌐 OnlyFans', LINKS.onlyfans)
-    ]
-  ])
-}
+bot.on('message', (msg) => {
+  console.log('Mensagem recebida:', {
+    text: msg.text,
+    chatId: msg.chat.id,
+    username: msg.from?.username
+  });
+});
 
-bot.start(async (ctx) => {
-  await saveLead(ctx)
-
-  await ctx.reply(
-    '✨ Bem-vindo ao universo de Kaic Paris.\n\nEscolha abaixo para onde você quer ir:',
-    mainMenu()
-  )
-})
-
-bot.action('go_preview', async (ctx) => {
-  await ctx.answerCbQuery()
-  await saveLead(ctx, { clicked_preview: true })
-
-  await ctx.reply(
-    `Entre nas prévias por aqui:\n${LINKS.preview}`,
-    Markup.inlineKeyboard([
-      [Markup.button.callback('⬅️ Voltar', 'back_home')]
-    ])
-  )
-})
-
-bot.action('go_vip', async (ctx) => {
-  await ctx.answerCbQuery()
-  await saveLead(ctx, { clicked_vip: true })
-
-  await ctx.reply(
-    `Acesse a área VIP por aqui:\n${LINKS.vip}`,
-    Markup.inlineKeyboard([
-      [Markup.button.callback('⬅️ Voltar', 'back_home')]
-    ])
-  )
-})
-
-bot.action('back_home', async (ctx) => {
-  await ctx.answerCbQuery()
-  await ctx.reply('Escolha uma opção:', mainMenu())
-})
-
-bot.launch()
-console.log('Bot rodando.')
+console.log('Bot iniciado com polling ativo.');
